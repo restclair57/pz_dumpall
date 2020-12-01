@@ -22,32 +22,67 @@ function ISInventoryPane:dumpAll(player)
   getPlayerInventory(self.player).inventoryPane.selected = {};
 end
 
-
+function getTextWidth(txt)
+  return getTextManager():MeasureStringX(UIFont.Small, getText(txt))
+end
 
 function ISInventoryPage:createChildren()
+  
+  local magicWidthNumber = 32
 
   self.minimumHeight = 100;
-  self.minimumWidth = 256+32;
+  self.minimumWidth = 256+magicWidthNumber;
 
   local titleBarHeight = self:titleBarHeight()
   local closeBtnSize = titleBarHeight
   local lootButtonHeight = titleBarHeight
+  
+  local buttonSpacing = 3
+  local buttonPadding = 2
+  
+  
+  local xferAllTextName = "IGUI_invpage_Transfer_all";
+  local lootAllTextName = "IGUI_invpage_Loot_all";
+  local dumpAllTextName = "IGUI_invpage_Dump_all";
+  local removeAllTextName = "IGUI_invpage_RemoveAll";
+  local contextMenuTurnOnTextName = "ContextMenu_Turn_On";
 
-  local panel2 = ISInventoryPane:new(0, titleBarHeight, self.width-32, self.height-titleBarHeight-9, self.inventory, self.zoom);
+  local panel2 = ISInventoryPane:new(0, titleBarHeight, self.width-magicWidthNumber, self.height-titleBarHeight-9, self.inventory, self.zoom);
   panel2.anchorBottom = true;
   panel2.anchorRight = true;
   panel2.player = self.player;
   panel2:initialise();
-
   panel2:setMode("details");
-
   panel2.inventoryPage = self;
   self:addChild(panel2);
 
   self.inventoryPane = panel2;
+  
+  
+  self.closeButton = ISButton:new(buttonSpacing, 0, closeBtnSize, closeBtnSize, "", self, ISInventoryPage.close);
+  self.closeButton:initialise();
+  self.closeButton.borderColor.a = 0.0;
+  self.closeButton.backgroundColor.a = 0;
+  self.closeButton.backgroundColorMouseOver.a = 0;
+  self.closeButton:setImage(self.closebutton);
+  self:addChild(self.closeButton);
+  if getCore():getGameMode() == "Tutorial" then
+    self.closeButton:setVisible(false)
+  end
 
-  local textWid = getTextManager():MeasureStringX(UIFont.Small, getText("IGUI_invpage_Transfer_all"))
-  self.transferAll = ISButton:new(self.width - 3 - closeBtnSize - 90 - textWid, 0, textWid, lootButtonHeight, getText("IGUI_invpage_Transfer_all"), self, ISInventoryPage.transferAll);
+  self.infoButton = ISButton:new(self.closeButton:getRight() + buttonSpacing, 0, closeBtnSize, closeBtnSize, "", self, ISInventoryPage.onInfo);
+  self.infoButton:initialise();
+  self.infoButton.borderColor.a = 0.0;
+  self.infoButton.backgroundColor.a = 0.0;
+  self.infoButton.backgroundColorMouseOver.a = 0.7;
+  self.infoButton:setImage(self.infoBtn);
+  self:addChild(self.infoButton);
+  self.infoButton:setVisible(false);
+  
+  
+
+  local textWid = getTextWidth(xferAllTextName)
+  self.transferAll = ISButton:new(self.infoButton:getRight() + buttonSpacing, 0, textWid, lootButtonHeight, getText(xferAllTextName), self, ISInventoryPage.transferAll);
   self.transferAll:initialise();
   self.transferAll.borderColor.a = 0.0;
   self.transferAll.backgroundColor.a = 0.0;
@@ -57,10 +92,8 @@ function ISInventoryPage:createChildren()
 
   if not self.onCharacter then
     
-    local cumulativeTextWidth = 4 + (closeBtnSize * 2)
-    local buttonSpacerAmount = 32;
     
-    self.lootAll = ISButton:new(cumulativeTextWidth, 0, 50, lootButtonHeight, getText("IGUI_invpage_Loot_all"), self, ISInventoryPage.lootAll);
+    self.lootAll = ISButton:new(self.infoButton:getRight() + buttonSpacing, 0, 50, lootButtonHeight, getText(lootAllTextName), self, ISInventoryPage.lootAll);
     self.lootAll:initialise();
     self.lootAll.borderColor.a = 0.0;
     self.lootAll.backgroundColor.a = 0.0;
@@ -68,10 +101,9 @@ function ISInventoryPage:createChildren()
     self:addChild(self.lootAll);
     self.lootAll:setVisible(false);
     
-    cumulativeTextWidth = cumulativeTextWidth + getTextManager():MeasureStringX(UIFont.Small, getText("IGUI_invpage_Loot_all")) + buttonSpacerAmount
     
     -- (x, y, width, height, title, clicktarget, onclick, onmousedown, allowMouseUpProcessing)
-    self.dumpAll = ISButton:new(cumulativeTextWidth, 0, 50, lootButtonHeight, "Dump All", self, ISInventoryPage.dumpAll);
+    self.dumpAll = ISButton:new(self.lootAll:getRight() + buttonSpacing, 0, 50, lootButtonHeight, getText(dumpAllTextName), self, ISInventoryPage.dumpAll);
     self.dumpAll:initialise();
     self.dumpAll.borderColor.a = 0.0;
     self.dumpAll.backgroundColor.a = 0.0;
@@ -80,10 +112,7 @@ function ISInventoryPage:createChildren()
     self.dumpAll:setVisible(true);
     
     
-    cumulativeTextWidth = cumulativeTextWidth + getTextManager():MeasureStringX(UIFont.Small, "Dump All") + buttonSpacerAmount
-    
-    
-    self.removeAll = ISButton:new(cumulativeTextWidth, 0, 50, lootButtonHeight, getText("IGUI_invpage_RemoveAll"), self, ISInventoryPage.removeAll);
+    self.removeAll = ISButton:new(self.dumpAll:getRight() + buttonSpacing, 0, 50, lootButtonHeight, getText(removeAllTextName), self, ISInventoryPage.removeAll);
     self.removeAll:initialise();
     self.removeAll.borderColor.a = 0.0;
     self.removeAll.backgroundColor.a = 0.0;
@@ -91,7 +120,7 @@ function ISInventoryPage:createChildren()
     self:addChild(self.removeAll);
     self.removeAll:setVisible(false);
 
-    self.toggleStove = ISButton:new(cumulativeTextWidth, 0, 50, lootButtonHeight, getText("ContextMenu_Turn_On"), self, ISInventoryPage.toggleStove);
+    self.toggleStove = ISButton:new(self.dumpAll:getRight() + buttonSpacing, 0, 50, lootButtonHeight, getText(contextMenuTurnOnTextName), self, ISInventoryPage.toggleStove);
     self.toggleStove:initialise();
     self.toggleStove.borderColor.a = 0.0;
     self.toggleStove.backgroundColor.a = 0.0;
@@ -116,26 +145,6 @@ function ISInventoryPage:createChildren()
 
   self.resizeWidget2 = resizeWidget;
 
-
-  self.closeButton = ISButton:new(3, 0, closeBtnSize, closeBtnSize, "", self, ISInventoryPage.close);
-  self.closeButton:initialise();
-  self.closeButton.borderColor.a = 0.0;
-  self.closeButton.backgroundColor.a = 0;
-  self.closeButton.backgroundColorMouseOver.a = 0;
-  self.closeButton:setImage(self.closebutton);
-  self:addChild(self.closeButton);
-  if getCore():getGameMode() == "Tutorial" then
-    self.closeButton:setVisible(false)
-  end
-
-  self.infoButton = ISButton:new(self.closeButton:getRight() + 1, 0, closeBtnSize, closeBtnSize, "", self, ISInventoryPage.onInfo);
-  self.infoButton:initialise();
-  self.infoButton.borderColor.a = 0.0;
-  self.infoButton.backgroundColor.a = 0.0;
-  self.infoButton.backgroundColorMouseOver.a = 0.7;
-  self.infoButton:setImage(self.infoBtn);
-  self:addChild(self.infoButton);
-  self.infoButton:setVisible(false);
 
   self.pinButton = ISButton:new(self.width - closeBtnSize - 3, 0, closeBtnSize, closeBtnSize, "", self, ISInventoryPage.setPinned);
   self.pinButton.anchorRight = true;
