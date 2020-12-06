@@ -81,8 +81,7 @@ function ISInventoryPage:createChildren()
   
   
 
-  local textWid = getTextWidth(xferAllTextName)
-  self.transferAll = ISButton:new(self.infoButton:getRight() + buttonSpacing, 0, textWid, lootButtonHeight, getText(xferAllTextName), self, ISInventoryPage.transferAll);
+  self.transferAll = ISButton:new(self.infoButton:getRight() + buttonSpacing, 0, getTextWidth(xferAllTextName) + buttonPadding, lootButtonHeight, getText(xferAllTextName), self, ISInventoryPage.transferAll);
   self.transferAll:initialise();
   self.transferAll.borderColor.a = 0.0;
   self.transferAll.backgroundColor.a = 0.0;
@@ -93,7 +92,7 @@ function ISInventoryPage:createChildren()
   if not self.onCharacter then
     
     
-    self.lootAll = ISButton:new(self.infoButton:getRight() + buttonSpacing, 0, 50, lootButtonHeight, getText(lootAllTextName), self, ISInventoryPage.lootAll);
+    self.lootAll = ISButton:new(self.infoButton:getRight() + buttonSpacing, 0, getTextWidth(lootAllTextName) + buttonPadding, lootButtonHeight, getText(lootAllTextName), self, ISInventoryPage.lootAll);
     self.lootAll:initialise();
     self.lootAll.borderColor.a = 0.0;
     self.lootAll.backgroundColor.a = 0.0;
@@ -103,7 +102,7 @@ function ISInventoryPage:createChildren()
     
     
     -- (x, y, width, height, title, clicktarget, onclick, onmousedown, allowMouseUpProcessing)
-    self.dumpAll = ISButton:new(self.lootAll:getRight() + buttonSpacing, 0, 50, lootButtonHeight, getText(dumpAllTextName), self, ISInventoryPage.dumpAll);
+    self.dumpAll = ISButton:new(self.lootAll:getRight() + buttonSpacing, 0, getTextWidth(dumpAllTextName) + buttonPadding, lootButtonHeight, getText(dumpAllTextName), self, ISInventoryPage.dumpAll);
     self.dumpAll:initialise();
     self.dumpAll.borderColor.a = 0.0;
     self.dumpAll.backgroundColor.a = 0.0;
@@ -112,7 +111,7 @@ function ISInventoryPage:createChildren()
     self.dumpAll:setVisible(true);
     
     
-    self.removeAll = ISButton:new(self.dumpAll:getRight() + buttonSpacing, 0, 50, lootButtonHeight, getText(removeAllTextName), self, ISInventoryPage.removeAll);
+    self.removeAll = ISButton:new(self.dumpAll:getRight() + buttonSpacing, 0, getTextWidth(removeAllTextName) + buttonPadding, lootButtonHeight, getText(removeAllTextName), self, ISInventoryPage.removeAll);
     self.removeAll:initialise();
     self.removeAll.borderColor.a = 0.0;
     self.removeAll.backgroundColor.a = 0.0;
@@ -120,7 +119,7 @@ function ISInventoryPage:createChildren()
     self:addChild(self.removeAll);
     self.removeAll:setVisible(false);
 
-    self.toggleStove = ISButton:new(self.dumpAll:getRight() + buttonSpacing, 0, 50, lootButtonHeight, getText(contextMenuTurnOnTextName), self, ISInventoryPage.toggleStove);
+    self.toggleStove = ISButton:new(self.dumpAll:getRight() + buttonSpacing, 0, getTextWidth(contextMenuTurnOnTextName) + buttonPadding, lootButtonHeight, getText(contextMenuTurnOnTextName), self, ISInventoryPage.toggleStove);
     self.toggleStove:initialise();
     self.toggleStove.borderColor.a = 0.0;
     self.toggleStove.backgroundColor.a = 0.0;
